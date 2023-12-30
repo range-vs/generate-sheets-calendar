@@ -25,6 +25,8 @@ class CalendarExcelGenerator:
         self.cells = ["a", "b", "c", "d", "e", "f", "g", "h"]
         self.weekdays = ["Тип", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
         self.mounts = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
+        self.year = 2024 # datetime.datetime.now().year --> current year
+
 
     def createCellParams(self, sheet, cellIdent, fontSize, color):
         headerCell = sheet[cellIdent] 
@@ -39,7 +41,7 @@ class CalendarExcelGenerator:
         # заголовок
         sheet.merge_cells(start_row=rowColumn, start_column=1, end_row=rowColumn, end_column=len(self.weekdays) + 1)
         self.createCellParams(sheet, "A"+str(rowColumn), 20, self.headerFill)
-        sheet["A"+str(rowColumn)] = self.mounts[indexMount] + " " + str(datetime.datetime.now().year) + " года"
+        sheet["A"+str(rowColumn)] = self.mounts[indexMount] + " " + str(self.year) + " года"
         rowColumn += 1
 
         # дни недели
@@ -51,7 +53,7 @@ class CalendarExcelGenerator:
         rowColumn += 1
 
         # ячейки
-        for week in calendar.monthcalendar(datetime.datetime.now().year, indexMount + 1):
+        for week in calendar.monthcalendar(self.year, indexMount + 1):
             index = 0
             self.createCellParams(sheet, self.cells[index] + str(rowColumn), 14, self.dateFill)
             self.createCellParams(sheet, self.cells[index] + str(rowColumn + 1), 14, self.dateFill)
@@ -62,7 +64,7 @@ class CalendarExcelGenerator:
             for day in week:
                 self.createCellParams(sheet, self.cells[index] + str(rowColumn), 14, self.dateFill)
                 if(day != 0):
-                    date = datetime.datetime(datetime.datetime.now().year, indexMount + 1, day)
+                    date = datetime.datetime(self.year, indexMount + 1, day)
                     sheet[self.cells[date.weekday() + 1] + str(rowColumn)]  = date.strftime("%d.%m")
                 index += 1
             sheet.column_dimensions[get_column_letter(index + 1)].width = self.column_width
